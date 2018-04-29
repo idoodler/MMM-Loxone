@@ -8,12 +8,17 @@ This module **doesn't have its own visualisation**, but it exposes information l
 ## Security
 This module doesn't transmit the defined credentials, it uses tokens to talk to your Loxone Miniserver.
 
-**Please create an user for your MagicMirror² keep your personal credentials secure!** 
+**Please create an user for your MagicMirror² to keep your personal credentials secure!** 
 
 ## Dependencies
 * An Installation of [MagicMirror²](https://github.com/MichMich/MagicMirror/)
-* LxCommunicator (will be installed via `npm install`)
-* [when](https://github.com/cujojs/when) (will be installed via `npm install`)
+* [LxCommunicator](https://www.npmjs.com/package/lxcommunicator) (Installed via `npm install`)
+* [when](https://github.com/cujojs/when) (Installed via `npm install`)
+
+## Upcoming features
+* Support controls like Alarm, WindowMonitor, Simple Virtual outputs, Weather in a modular way
+* Further power saving features (Ability to switch off the monitors AC power via an relay)
+* Quick overview, whats up in your home
 
 ## Installation
 Navigate into your MagicMirror's `modules` folder:

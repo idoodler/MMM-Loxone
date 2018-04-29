@@ -5,6 +5,10 @@
   "main": "MMM-Loxone.js",
   "author": "David Gölzhäuser",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/idoodler/MMM-Loxone.git"
+  },
   "devDependencies": {
     "grunt": "latest",
     "grunt-eslint": "latest",
