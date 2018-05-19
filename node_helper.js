@@ -1,10 +1,10 @@
-var NodeHelper = require('node_helper');
-var LxCommunicator = require("lxcommunicator");
-var LxSupportCode = LxCommunicator.SupportCode;
-var Os = require('os');
-var exec = require('child_process').exec;
-var when = require('when');
-var LxEnums = require("./shared/lxEnums.js");
+var NodeHelper = require('node_helper'),
+    LxCommunicator = require("lxcommunicator"),
+    LxSupportCode = LxCommunicator.SupportCode,
+    Os = require('os'),
+    exec = require('child_process').exec,
+    when = require('when'),
+    LxEnums = require("./shared/lxEnums.js");
 
 module.exports = NodeHelper.create({
 
@@ -148,9 +148,10 @@ module.exports = NodeHelper.create({
                 });
                 break;
             case this.lightStateUuid:
-                console.info(this.name, "Got lightMood change " + value);
                 value = JSON.parse(value);
-                var isPresent = value.length === 1 && value[0] !== 778; // 778 is the "All off" mode Id
+                var activeMoodsName = this._getNameForActiveMoods(value),
+                    isPresent = value.length === 1 && value[0] !== LxEnums.LIGHT_MOODS.ALL_OFF;
+                console.info(this.name, "Got lightMood change to: " + activeMoodsName);
                 this.sendSocketNotification(LxEnums.NOTIFICATIONS.INTERN.PRESENCE, {
                     present: isPresent
                 });
@@ -158,7 +159,7 @@ module.exports = NodeHelper.create({
                 break;
             case this.notificationUuid:
                 value = JSON.parse(value);
-                // Sometimes the miniserver is sending notifications with value === 0, we can't process these notifications
+                // Sometimes the Miniserver is sending notifications with value === 0, we can't process these notifications
                 if (value !== 0) {
                     console.info(this.name, "Got notification: " + JSON.stringify(value));
                     this.sendSocketNotification(LxEnums.NOTIFICATIONS.INTERN.MINISERVER_NOTIFICATION, value);
@@ -253,6 +254,33 @@ module.exports = NodeHelper.create({
         } else {
             exec("/opt/vc/bin/tvservice -o", null);
         }
-    }
+    },
 
+    _getNameForActiveMoods: function _getNameForActiveMoods(moods) {
+        var name = "";
+        if (moods.length > 1) {
+            var moodNames = moods.map(function(moodId) {
+                    return this._getNameForActiveMoods([moodId]);
+            }.bind(this));
+            return moodNames.join(" + ");
+        } else {
+            switch (moods[0]) {
+                case LxEnums.LIGHT_MOODS.MANUAL:
+                    name = "Manual";
+                    break;
+                case LxEnums.LIGHT_MOODS.ALARM_CLOCK:
+                    name = "Alarm Clock";
+                    break;
+                case LxEnums.LIGHT_MOODS.ALL_ON:
+                    name = "All on";
+                    break;
+                case LxEnums.LIGHT_MOODS.ALL_OFF:
+                    name = "All off";
+                    break;
+                default:
+                    name = "Custom mode"
+            }
+            return name + "(" + moods[0] + ")";
+        }
+    }
 });

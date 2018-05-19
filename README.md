@@ -5,6 +5,9 @@ MMM-Loxone connects to your Loxone Miniserver and lets it communicate to your Ma
 
 This module **doesn't have its own visualisation**, but it exposes information like the room temperature and other states other modules can and will use.
 
+## Disclaimer
+This package has been written for the Raspberry Pi and has only be tester on the Raspberry Pi please report any incompatibilities.
+
 ## Security
 This module doesn't transmit the defined credentials, it uses tokens to talk to your Loxone Miniserver.
 

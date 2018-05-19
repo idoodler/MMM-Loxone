@@ -33,4 +33,11 @@
         WEATHER: 7
     };
 
+    exports.LIGHT_MOODS = {
+        MANUAL: -1,
+        ALARM_CLOCK: 776,
+        ALL_ON: 777,
+        ALL_OFF: 778
+    }
+
 }(typeof exports === 'undefined' ? window.LxEnums = {} : exports));

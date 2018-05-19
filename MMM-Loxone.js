@@ -28,18 +28,18 @@ Module.register("MMM-Loxone",{
      * The module has started, validate the configuration and establish a connection to the Loxone Miniserver
      */
     start: function start() {
-        if (this.config.host && this.config.user && this.config.pwd) {
-            this.sendSocketNotification(LxEnums.NOTIFICATIONS.INTERN.CONNECT, this.config);
-        } else {
-            setTimeout(function() {
+        setTimeout(function() {
+            if (this.config.host && this.config.user && this.config.pwd) {
+                this.sendSocketNotification(LxEnums.NOTIFICATIONS.INTERN.CONNECT, this.config);
+            } else {
                 this.sendNotification(LxEnums.NOTIFICATIONS.PUBLIC.ALERT, {
                     title: "MMM-Loxone",
                     message: "Invalide MMM-Loxone configuration please check your `config.json` file!",
                     imageFA: "exclamation-triangle",
                     timer: 30 * 1000
                 });
-            }.bind(this), 5 * 1000);
-        }
+            }
+        }.bind(this), 5 * 1000);
     },
 
     /**

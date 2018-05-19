@@ -1,8 +1,11 @@
 {
   "name": "MMM-Loxone",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MMM-Loxone connects to your Loxone Miniserver and lets it communicate to your MagicMirror².",
   "main": "MMM-Loxone.js",
+  "scripts": {
+    "install": "sudo chmod u+s /opt/vc/bin/tvservice && sudo chmod u+s /bin/chvt"
+  },
   "author": "David Gölzhäuser",
   "license": "MIT",
   "repository": {
