@@ -4,6 +4,7 @@ var NodeHelper = require('node_helper'),
     Os = require('os'),
     exec = require('child_process').exec,
     when = require('when'),
+    isPi = require("detect-rpi"),
     LxEnums = require("./shared/lxEnums.js");
 
 module.exports = NodeHelper.create({
@@ -78,7 +79,7 @@ module.exports = NodeHelper.create({
                 // Emit the structure file for other modules to use
                 this.sendSocketNotification(LxEnums.NOTIFICATIONS.INTERN.STRUCTURE_FILE, this.structureFile);
 
-                console.info(this.name, "Search room");
+                console.info(this.name, "Search room with uuid: " + this.config.roomUuid);
                 if (this.structureFile.rooms.hasOwnProperty(this.config.roomUuid)) {
                     this.room = this.structureFile.rooms[this.config.roomUuid];
                     console.info(this.name, "Found room: " + this.room.name);
@@ -90,7 +91,7 @@ module.exports = NodeHelper.create({
                         this.tempStateUuid = this.irc.states.tempActual;
                         console.info(this.name, "Found IRC (" + this.irc.name + ") in room " + this.room.name);
                     } else {
-                        console.warn(this.name, "Couldn't find IRC!")
+                        console.warn(this.name, "Couldn't find IRC, no indoor temperature available!");
                     }
 
                     if (this.config.presence) {
@@ -100,7 +101,7 @@ module.exports = NodeHelper.create({
                             this.lightStateUuid = this.lightControl.states.activeMoods;
                             console.info(this.name, "Found LightControl (" + this.lightControl.name + ") in room " + this.room.name);
                         } else {
-                            console.warn(this.name, "Couldn't find LightControl for presence detection");
+                            console.warn(this.name, "Couldn't find LightControl, no presence detection available");
                         }
                     }
 
@@ -176,17 +177,10 @@ module.exports = NodeHelper.create({
 
     // Delegate methods of LxCommunicator
     socketOnConnectionClosed: function socketOnConnectionClosed(socket, code) {
-        switch (code) {
-            case LxSupportCode.WEBSOCKET_OUT_OF_SERVICE:
-                console.warn(this.name, "Miniserver is rebooting, reload structure after it is reachable again!");
-                this._startOOSTime();
-                break;
-            case LxSupportCode.WEBSOCKET_CLOSE:
-                console.warn(this.name, "Websocket has been closed without reason, reopen it now!");
-                this.connectToMiniserver();
-                break;
-            default:
-                console.warn(this.name, "Websocket has been closed with code: " + code);
+        if (code !== LxSupportCode.MANUAL) {
+            !this.ossInterval && this._startOOSTime();
+        } else {
+            console.warn(this.name, "Websocket has been closed with code: " + code);
         }
     },
 
@@ -224,16 +218,17 @@ module.exports = NodeHelper.create({
      */
     _startOOSTime: function _startOSSTimer() {
         this.sendSocketNotification(LxEnums.NOTIFICATIONS.INTERN.OOS, true);
-        var defer = when.defer(),
-            ossInterval = setInterval(function isMiniserverReachable() {
-                this.connectToMiniserver().then(function() {
-                    this.sendSocketNotification(LxEnums.NOTIFICATIONS.INTERN.OOS, false);
-                    clearInterval(ossInterval);
-                    defer.resolve();
-                }.bind(this), function() {
-                    console.info(this.name, "Miniserver is still not reachable, try it again...");
-                }.bind(this));
-            }.bind(this), 10000);
+        var defer = when.defer();
+
+        this.ossInterval = setInterval(function isMiniserverReachable() {
+            this.connectToMiniserver().then(function() {
+                this.sendSocketNotification(LxEnums.NOTIFICATIONS.INTERN.OOS, false);
+                clearInterval(this.ossInterval);
+                defer.resolve();
+            }.bind(this), function() {
+                console.info(this.name, "Miniserver is still not reachable, try it again...");
+            }.bind(this));
+        }.bind(this), 10000);
         return defer.promise;
     },
 
@@ -245,6 +240,11 @@ module.exports = NodeHelper.create({
     },
 
     _togglePresence: function _togglePresence(isPresent) {
+        if (!isPi()) {
+            console.info("This is no Raspberry Pi, toggle the display is not supported!");
+            return;
+        }
+
         if (isPresent) {
             // Check if hdmi output is already on
             exec("/opt/vc/bin/tvservice -s").stdout.on('data', function(data) {

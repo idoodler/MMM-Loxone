@@ -23,6 +23,7 @@
     "time-grunt": "latest"
   },
   "dependencies": {
+    "detect-rpi": "^1.2.0",
     "lxcommunicator": "^0.9.0",
     "when": "^3.7.8"
   }

@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Better logging for Light changes
 - Added post installs script to ensure the display power off is working
 - Some code formatting
+- Fixed issue resulting in stopped communication with the Loxone Miniserver
 
 ## [1.0.0]
 
