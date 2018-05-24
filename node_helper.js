@@ -175,12 +175,19 @@ module.exports = NodeHelper.create({
         }
     },
 
-    // Delegate methods of LxCommunicator
     socketOnConnectionClosed: function socketOnConnectionClosed(socket, code) {
-        if (code !== LxSupportCode.MANUAL) {
-            !this.ossInterval && this._startOOSTime();
-        } else {
-            console.warn(this.name, "Websocket has been closed with code: " + code);
+        switch (code) {
+            case LxSupportCode.WEBSOCKET_OUT_OF_SERVICE:
+                console.warn(this.name, "Miniserver is rebooting, reload structure after it is reachable again!");
+                this._startOOSTime();
+                break;
+            case LxSupportCode.WEBSOCKET_CLOSE:
+            case LxSupportCode.WEBSOCKET_TIMEOUT:
+                console.warn(this.name, "Websocket has been closed without reason, reopen it now!");
+                this.connectToMiniserver();
+                break;
+            default:
+                console.warn(this.name, "Websocket has been closed with code: " + code);
         }
     },
 
