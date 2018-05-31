@@ -11,6 +11,8 @@ module.exports = NodeHelper.create({
 
     requiresVersion: "2.1.1",
 
+    stateMap: {},
+
     start: function() {
         this.config = null;
         this.structureFile = null;
@@ -19,6 +21,7 @@ module.exports = NodeHelper.create({
         this.notificationUuid = null;
         this.room = null;
         this.irc = null;
+        this.observingControls = [];
         this.socket = null;
 
         var WebSocketConfig = LxCommunicator.WebSocketConfig,
@@ -105,6 +108,26 @@ module.exports = NodeHelper.create({
                         }
                     }
 
+                    if (this.config.observingUuids && this.config.observingUuids.length) {
+                        this.config.observingUuids.forEach(function (observingUuid) {
+                            var observingControl = this.structureFile.controls[observingUuid];
+                            if (!observingControl) {
+                                console.log(this.name, "observing Uuid (" + observingUuid + ") is not available!");
+                            } else {
+                                if (Object.values(LxEnums.OBSERVABLE_CONTROL_TYPES).indexOf(observingControl.type) !== -1) {
+                                    this.observingControls.push(observingControl);
+                                    var stateObj = {};
+                                    Object.keys(observingControl.states).forEach(function (stateKey) {
+                                        stateObj[stateKey] = null;
+                                    });
+                                    this.stateMap[observingUuid] = stateObj;
+                                } else {
+                                    console.log(this.name, "observing Uuid (" + observingUuid + ") is not supported, only VirtualStates or States are supported!");
+                                }
+                            }
+                        }.bind(this));
+                    }
+
                 } else {
                     console.warn(this.name, "Couldn't find Room!");
                 }
@@ -168,6 +191,22 @@ module.exports = NodeHelper.create({
                     value = undefined;
                 }
                 break;
+            default:
+                if (Object.keys(this.stateMap).length) {
+                    var control = this.observingControls.find(function(ctrl) {
+                            return Object.values(ctrl.states).indexOf(uuid) !== -1;
+                        });
+
+                    if (!!control && !!this.stateMap[control.uuidAction]) {
+                        this.stateMap[control.uuidAction][Object.keys(control.states)[Object.values(control.states).indexOf(uuid)]] = value;
+                        if (Object.values(this.stateMap[control.uuidAction]).indexOf(null) === -1) {
+                            this.sendSocketNotification(LxEnums.NOTIFICATIONS.INTERN.OBSERVING_CONTROL, {
+                                control: control,
+                                states: this.stateMap[control.uuidAction]
+                            });
+                        }
+                    }
+                }
         }
         // Emit any state for other modules to use
         if (value !== undefined) {
@@ -205,7 +244,7 @@ module.exports = NodeHelper.create({
         if (key) {
             events.forEach(function(event) {
                 payload = event[key];
-                payload && this.processEvent(event.uuid, payload);
+                (payload !== undefined) && this.processEvent(event.uuid, payload);
             }.bind(this));
         }
     },

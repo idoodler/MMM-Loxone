@@ -1,6 +1,6 @@
 {
   "name": "MMM-Loxone",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "MMM-Loxone connects to your Loxone Miniserver and lets it communicate to your MagicMirror².",
   "main": "MMM-Loxone.js",
   "scripts": {
@@ -25,6 +25,7 @@
   "dependencies": {
     "detect-rpi": "^1.2.0",
     "lxcommunicator": "^0.9.0",
+    "sprintf-js": "^1.1.1",
     "when": "^3.7.8"
   }
 }

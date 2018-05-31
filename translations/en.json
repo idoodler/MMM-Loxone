@@ -1,0 +1,4 @@
+{
+  "LOADING": "Loading...",
+  "MISSING_OBSERVING_UUIDS": "Missing 'observingUuids' in 'config.json'!"
+}

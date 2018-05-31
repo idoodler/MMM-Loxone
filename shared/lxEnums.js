@@ -10,7 +10,8 @@
             STRUCTURE_FILE: "MMM-Loxone_structureFile",
             STATE: "MMM-Loxone_state",
             OOS: "MMM-Loxone_OOS",
-            PRESENCE: "MMM-Loxone_presence"
+            PRESENCE: "MMM-Loxone_presence",
+            OBSERVING_CONTROL: "MMM-Loxone_observing-control"
         },
         PUBLIC: {
             ALERT: "SHOW_ALERT",
@@ -38,6 +39,12 @@
         ALARM_CLOCK: 776,
         ALL_ON: 777,
         ALL_OFF: 778
+    };
+
+    exports.OBSERVABLE_CONTROL_TYPES = {
+        INFO_ONLY_ANALOG: "InfoOnlyAnalog",
+        INFO_ONLY_DIGITAL: "InfoOnlyDigital",
+        TEXT_STATE: "TextState"
     }
 
 }(typeof exports === 'undefined' ? window.LxEnums = {} : exports));

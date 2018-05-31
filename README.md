@@ -3,8 +3,6 @@ This is a module for the [MagicMirror²](https://github.com/MichMich/MagicMirror
 
 MMM-Loxone connects to your Loxone Miniserver and lets it communicate to your MagicMirror².
 
-This module **doesn't have its own visualisation**, but it exposes information like the room temperature and other states other modules can and will use.
-
 ## Disclaimer
 This package has been written for the Raspberry Pi and has only be tester on the Raspberry Pi please report any incompatibilities.
 
@@ -68,6 +66,7 @@ var config = {
 | `user`                                | *required* Defines the Loxone Miniserver username.<br><br>**Type:** `string`
 | `pwd`                                 | *required* Defines the Loxone Miniserver password.<br><br>**Type:** `string`
 | `roomUuid`                            | *Optional* Defines the room of which the room temperature is displayed<br><br>**Info:** Modules like the default [currentWeather](https://github.com/MichMich/MagicMirror/tree/develop/modules/default/currentweather) and [MMM-forecast-io](https://github.com/idoodler/MMM-forecast-io) will display the indoor temperature, please refere to their documentation<br><br>**Type:** `string`
+| `observingUuids`                      | *optional* Defines controls that should be shown on our module. Supported Controls: Virtual State, State<br><br>**Type:** `array`<br><br>**Default:** `Empty array`
 | `presence`                            | *Optional* If enabled this module will use the LightControllerV2 in the defined room to set the MagicMirror to sleep or wake it up<br><br>**Type:** `bool`<br><br>**Default:** `false`
 | `showInfoNotifications`               | *optional* If info notifications should be shown.<br><br>**Type:** `bool`<br><br>**Default:** `true`
 | `showErrorNotifications`              | *optional* If error notifications should be shown.<br><b r>**Type:** `bool`<br><br>**Default:** `true`
@@ -97,7 +96,25 @@ var config = {
 1. Open the Loxone Webinterface
 2. Navigate to the room you want to display the room temperature
 3. Copy the last path component displayed in your browsers URL-Bar<br>
-![alt text](./getRoomUuid.PNG "How to get the roomUuid")
+![alt text](./observingUuids.PNG "How to get the roomUuid")
+
+
+### Populate observingUuids
+`observingUuids` is an array of control uuids
+
+*Example:*
+````js
+observingUuids: [
+    "0d12f989-0060-c82f-ffff2083eaf2523c"
+]
+````
+![alt text](./getControlUuid.PNG "Example")
+
+1. Open the Loxone Webinterface
+2. Navigate to the control you want to display on your mirror
+    - Virtual State and State controls are supported
+3. Copy the last path component displayed in your browsers URL-Bar<br>
+![alt text](./getControlUuid.PNG "How to get the controlUuid")
 
 ## Developer notes
 Notifications emitted by MMM-Loxone

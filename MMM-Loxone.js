@@ -17,8 +17,11 @@ Module.register("MMM-Loxone",{
         showInfoNotifications: true,
         showErrorNotifications: true,
         showSystemNotifications: true,
-        allow3rdParty: false
+        allow3rdParty: false,
+        observingUuids: [] // Array of UUIDs to observe
     },
+
+    observingControls: [],
 
     init: function init() {
         this.requestPromiseMap = {};
@@ -50,8 +53,16 @@ Module.register("MMM-Loxone",{
         return [
             this.file('scripts/q.js'),
             this.file('scripts/jquery.min.js'),
-            this.file('shared/lxEnums.js')
+            this.file('shared/lxEnums.js'),
+            this.file('node_modules/sprintf-js/dist/sprintf.min.js')
         ]
+    },
+
+    getTranslations: function getTranslations() {
+        return {
+            en: "translations/en.json",
+            de: "translations/de.json"
+        };
     },
 
     /**
@@ -83,7 +94,67 @@ Module.register("MMM-Loxone",{
             case LxEnums.NOTIFICATIONS.INTERN.REQUEST_RESPONSE:
                 this._gotRequestResponseNotification(payload);
                 break;
+            case LxEnums.NOTIFICATIONS.INTERN.OBSERVING_CONTROL:
+                this._handleObservingControlEvent(payload.control, payload.states);
+                break;
         }
+    },
+
+    getDom: function getDoom() {
+        var wrapper = $('<div/>');
+
+        if (this.config.observingUuids && this.config.observingUuids.length) {
+            if (Object.keys(this.observingControls).length) {
+                var table = $("<table/>"),
+                    row,
+                    observerControl,
+                    control,
+                    states;
+                Object.keys(this.observingControls).forEach(function(controlUuid) {
+                    observerControl = this.observingControls[controlUuid];
+                    control = observerControl.control;
+                    states = observerControl.states;
+                    switch (control.type) {
+                        case LxEnums.OBSERVABLE_CONTROL_TYPES.INFO_ONLY_ANALOG:
+                            row = $("<tr>" +
+                                "   <td>" + control.name + ":</td>" +
+                                "   <td>" + sprintf(control.details.format, states.value) + "</td>" +
+                                "</tr>");
+                            break;
+                        case LxEnums.OBSERVABLE_CONTROL_TYPES.INFO_ONLY_DIGITAL:
+                            if (control.details.image) {
+                                row = $("<tr>" +
+                                    "   <td>" + control.name + ":</td>" +
+                                    "   <td><img src='http://" + this.config.host + "/" + (states.active ? control.details.image.on : control.details.image.off) + ".png'/></td>" +
+                                    "</tr>");
+                            } else if (control.details.text && control.details.color) {
+                                row = $("<tr>" +
+                                    "   <td>" + control.name + ":</td>" +
+                                    "   <td style='color: " + (states.active ? control.details.color.on : control.details.color.off) + "'>" +
+                                        (states.active ? control.details.text.on : control.details.text.off) +
+                                    "   </td>" +
+                                    "</tr>");
+                            }
+                            break;
+                        case LxEnums.OBSERVABLE_CONTROL_TYPES.TEXT_STATE:
+                            row = $("<tr>" +
+                                "   <td>" + control.name + ":</td>" +
+                                "   <td>" + states.textAndIcon + "</td>" +
+                                "</tr>");
+                            break;
+                    }
+
+                    table.append(row);
+                }.bind(this));
+                wrapper.append(table);
+            } else {
+                wrapper.text(this.translate("LOADING"));
+            }
+        } else {
+            wrapper.text(this.translate("MISSING_OBSERVING_UUIDS"));
+        }
+
+        return wrapper[0];
     },
 
     /**
@@ -134,6 +205,18 @@ Module.register("MMM-Loxone",{
         }
     },
 
+    _handleObservingControlEvent: function _handleObservingControlEvent(control, states) {
+        try {
+            this.observingControls[control.uuidAction] = {
+                control: control,
+                states: states
+            };
+            this.updateDom();
+        } catch(e) {
+            console.error(this.name, e);
+        }
+    },
+
     /**
      * Allows MMM-Loxone to broadcast notifications to other modules to let them use data from the Loxone Miniserver
      * @param notificationKey
@@ -173,7 +256,7 @@ Module.register("MMM-Loxone",{
     },
 
     /**
-     * Wrapps around MagicMirrors sendSocketNotification to be able to return a promise in the this._sendCommands method
+     * Wraps around MagicMirrors sendSocketNotification to be able to return a promise in the this._sendCommands method
      * @param payload
      * @private
      */
