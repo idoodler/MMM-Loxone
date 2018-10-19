@@ -1,0 +1,4 @@
+{
+  "LOADING": "Laddar...",
+  "MISSING_OBSERVING_UUIDS": "Saknar 'observingUuids' under konfigurationen i filen 'config.json'!"
+}
