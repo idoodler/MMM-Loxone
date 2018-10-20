@@ -61,7 +61,8 @@ Module.register("MMM-Loxone",{
     getTranslations: function getTranslations() {
         return {
             en: "translations/en.json",
-            de: "translations/de.json"
+            de: "translations/de.json",
+            sv: "translations/sv.json"
         };
     },
 
