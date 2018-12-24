@@ -76,8 +76,8 @@ var config = {
 
 ## Display the room temperature
 ### Requirements
-* The room needs to have at lease contain one Intelligent Room Controller
-    * The first Intelligent Room Controller will be used if multiple are defined in one room
+* The room needs to have at lease contain one Intelligent Room Controller (v2)
+    * The first Intelligent Room Controller (v2) will be used if multiple are defined in one room
 * `roomUuid` needs to be defined in the MMM-Loxone configuration in `config.js`
 * [currentWeather](https://github.com/MichMich/MagicMirror/tree/develop/modules/default/currentweather) or [MMM-forecast-io](https://github.com/dmcinnes/MMM-forecast-io) must be installed and correctly configured to display the indoor room temperature
 

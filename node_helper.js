@@ -147,12 +147,14 @@ module.exports = NodeHelper.create({
             }.bind(this));
         }.bind(this), function(e) {
             console.error(e);
-            throw e;
         });
     },
 
     getIrcInRoom: function getIrcInRoom() {
-        var ircs = this._findControlsInRoomWithType("IRoomController");
+        var ircs = this._findControlsInRoomWithType("IRoomControllerV2");
+        if (ircs.length === 0) {
+            ircs = this._findControlsInRoomWithType("IRoomController")
+        }
         return ircs.length ? ircs[0] : null;
     },
 
@@ -217,13 +219,10 @@ module.exports = NodeHelper.create({
     socketOnConnectionClosed: function socketOnConnectionClosed(socket, code) {
         switch (code) {
             case LxSupportCode.WEBSOCKET_OUT_OF_SERVICE:
-                console.warn(this.name, "Miniserver is rebooting, reload structure after it is reachable again!");
-                this._startOOSTime();
-                break;
             case LxSupportCode.WEBSOCKET_CLOSE:
             case LxSupportCode.WEBSOCKET_TIMEOUT:
-                console.warn(this.name, "Websocket has been closed without reason, reopen it now!");
-                this.connectToMiniserver();
+                console.warn(this.name, "Miniserver is rebooting, reload structure after it is reachable again!");
+                this._startOOSTime();
                 break;
             default:
                 console.warn(this.name, "Websocket has been closed with code: " + code);
