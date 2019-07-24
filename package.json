@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "detect-rpi": "^1.2.0",
-    "lxcommunicator": "git@github.com:Loxone/lxcommunicator.git",
+    "lxcommunicator": "^1.0.1",
     "sprintf-js": "^1.1.1",
     "when": "^3.7.8"
   }
