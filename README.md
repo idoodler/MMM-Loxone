@@ -127,6 +127,12 @@ Notifications emitted by MMM-Loxone
 | `LOXONE_STRUCTURE_FILE` | The current structure file of the Loxone Miniserver as an Object `{}`.<br><br>**Payload:** ``Object``<br><br>**Note:** `allow3rdParty` must be configured in your ``config.json``
 | `LOXONE_OSS`            | **O**ut **O**f **S**ervice status of the Loxone Miniserver.<br><br>**Example:** `true` if the Miniserver is rebooting, `false` if the Miniserver is up and running.<br><br>**Payload:** `bool`<br><br>**Note:** `allow3rdParty` must be configured in your ``config.json``
 
+## Next steps
+
++ Statistics
++ Reworked presence detection
++ Systemstate
+
 ## License
 The MIT License (MIT)
 
