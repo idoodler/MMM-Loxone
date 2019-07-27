@@ -177,7 +177,7 @@ module.exports = NodeHelper.create({
             case this.lightStateUuid:
                 value = JSON.parse(value);
                 var activeMoodsName = this._getNameForActiveMoods(value),
-                    isPresent = value.length === 1 && value[0] !== LxEnums.LIGHT_MOODS.ALL_OFF;
+                    isPresent = value[0] !== LxEnums.LIGHT_MOODS.ALL_OFF;
                 console.info(this.name, "Got lightMood change to: " + activeMoodsName);
                 this.sendSocketNotification(LxEnums.NOTIFICATIONS.INTERN.PRESENCE, {
                     present: isPresent
@@ -322,7 +322,7 @@ module.exports = NodeHelper.create({
                 default:
                     name = "Custom mode"
             }
-            return name + "(" + moods[0] + ")";
+            return name + (moods[0] ? "(" + moods[0] + ")" : "");
         }
     }
 });
