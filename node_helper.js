@@ -73,7 +73,7 @@ module.exports = NodeHelper.create({
         // Close any existent socket
         this.socket.close();
         // Open a Websocket connection to a miniserver by just providing the host, username and password!
-        console.info("Opening Socket to your Miniserver");
+        console.info(this.name, "Opening Socket to your Miniserver");
         return this.socket.open(this.config.host, this.config.user, this.config.pwd).then(function() {
             // Download the loxApp3.json
             console.log(this.name, "Download LoxApp3.json");
@@ -137,17 +137,18 @@ module.exports = NodeHelper.create({
 
                 // Send a command, responses will be handled
                 console.info(this.name, "Enabling statusupdates");
-                return this.socket.send("jdev/sps/enablebinstatusupdate").then(function(respons) {
-                    console.log(this.name, "Successfully executed '" + respons.LL.control + "' with code " + respons.LL.Code + " and value " + respons.LL.value);
+                return this.socket.send("jdev/sps/enablebinstatusupdate").then(function(response) {
+                    console.log(this.name, "Successfully executed '" + response.LL.control + "' with code " + response.LL.Code + " and value " + response.LL.value);
                     return true;
                 }.bind(this), function(err) {
-                    console.error(err);
+                    console.error(this.name, err);
                     throw err;
-                });
+                }.bind(this));
             }.bind(this));
         }.bind(this), function(e) {
-            console.error(e);
-        });
+            console.error(this.name, e);
+            throw e;
+        }.bind(this));
     },
 
     getIrcInRoom: function getIrcInRoom() {
@@ -196,8 +197,8 @@ module.exports = NodeHelper.create({
             default:
                 if (Object.keys(this.stateMap).length) {
                     var control = this.observingControls.find(function(ctrl) {
-                            return Object.values(ctrl.states).indexOf(uuid) !== -1;
-                        });
+                        return Object.values(ctrl.states).indexOf(uuid) !== -1;
+                    });
 
                     if (!!control && !!this.stateMap[control.uuidAction]) {
                         this.stateMap[control.uuidAction][Object.keys(control.states)[Object.values(control.states).indexOf(uuid)]] = value;
@@ -290,14 +291,18 @@ module.exports = NodeHelper.create({
             return;
         }
 
-        exec("vcgencmd display_power " + +isPresent, null);
+        this.togglePresenceTimeout && clearTimeout(this.togglePresenceTimeout);
+        this.togglePresenceTimeout = setTimeout(function() {
+            exec("vcgencmd display_power " + +isPresent, null);
+            this.togglePresenceTimeout = null;
+        }.bind(this), 1000);
     },
 
     _getNameForActiveMoods: function _getNameForActiveMoods(moods) {
         var name = "";
         if (moods.length > 1) {
             var moodNames = moods.map(function(moodId) {
-                    return this._getNameForActiveMoods([moodId]);
+                return this._getNameForActiveMoods([moodId]);
             }.bind(this));
             return moodNames.join(" + ");
         } else {

@@ -8,6 +8,7 @@ Module.register("MMM-Loxone",{
         pwd: null,
         roomUuid: null,
         presence: false,
+        fadeOut: true,
         showNotificationOfControlTypes: [
             "Intercom",
             "Alarm",
@@ -31,6 +32,7 @@ Module.register("MMM-Loxone",{
      * The module has started, validate the configuration and establish a connection to the Loxone Miniserver
      */
     start: function start() {
+        this.config.fadeOut && $(document.body).css("transition", "opacity .5s ease-in-out");
         setTimeout(function() {
             if (this.config.host && this.config.user && this.config.pwd) {
                 this.sendSocketNotification(LxEnums.NOTIFICATIONS.INTERN.CONNECT, this.config);
@@ -77,6 +79,7 @@ Module.register("MMM-Loxone",{
                 this.sendNotification(LxEnums.NOTIFICATIONS.PUBLIC.TEMP, payload.temp);
                 break;
             case LxEnums.NOTIFICATIONS.INTERN.PRESENCE:
+                this.config.fadeOut && this._handlePresence(payload.present);
                 this.sendNotification(LxEnums.NOTIFICATIONS.PUBLIC.PRESENCE, payload.present);
                 break;
             case LxEnums.NOTIFICATIONS.INTERN.MINISERVER_NOTIFICATION:
@@ -132,7 +135,7 @@ Module.register("MMM-Loxone",{
                                 row = $("<tr>" +
                                     "   <td>" + control.name + ":</td>" +
                                     "   <td style='color: " + (states.active ? control.details.color.on : control.details.color.off) + "'>" +
-                                        (states.active ? control.details.text.on : control.details.text.off) +
+                                    (states.active ? control.details.text.on : control.details.text.off) +
                                     "   </td>" +
                                     "</tr>");
                             }
@@ -278,6 +281,10 @@ Module.register("MMM-Loxone",{
         } else {
             Log.info(this.name, "Got unexpected response with id: " + id);
         }
+    },
+
+    _handlePresence: function _handlePresence(isPresent)  {
+        $(document.body).css("opacity", +isPresent);
     },
 
     /**

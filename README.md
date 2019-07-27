@@ -68,6 +68,7 @@ var config = {
 | `roomUuid`                            | *Optional* Defines the room of which the room temperature is displayed<br><br>**Info:** Modules like the default [currentWeather](https://github.com/MichMich/MagicMirror/tree/develop/modules/default/currentweather) and [MMM-forecast-io](https://github.com/idoodler/MMM-forecast-io) will display the indoor temperature, please refere to their documentation<br><br>**Type:** `string`
 | `observingUuids`                      | *optional* Defines controls that should be shown on our module. Supported Controls: Virtual State, State<br><br>**Type:** `array`<br><br>**Default:** `Empty array`
 | `presence`                            | *Optional* If enabled this module will use the LightControllerV2 in the defined room to set the MagicMirror to sleep or wake it up<br><br>**Type:** `bool`<br><br>**Default:** `false`
+| `fadeOut`                             | *Optional* Fades out the webinterface before the HDMI output is disabled (MagicMirror goes to sleep)<br><br>**Type:** `bool`<br><br>**Default:** `false`
 | `showInfoNotifications`               | *optional* If info notifications should be shown.<br><br>**Type:** `bool`<br><br>**Default:** `true`
 | `showErrorNotifications`              | *optional* If error notifications should be shown.<br><b r>**Type:** `bool`<br><br>**Default:** `true`
 | `showSystemNotifications`             | *optional* If system notifications should be shown.<br><br>**Type:** `bool`<br><br>**Default:** `true`
