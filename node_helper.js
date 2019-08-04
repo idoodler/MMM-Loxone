@@ -98,14 +98,31 @@ module.exports = NodeHelper.create({
                     }
 
                     if (this.config.presence) {
-                        console.info(this.name, "Search LightControls and LightV2Controls in room");
-                        this.lightControl = this.getLightControl();
-                        if (this.lightControl) {
-                            this.lightStateUuid = this.lightControl.states.activeMoods;
-                            console.info(this.name, "Found LightControl (" + this.lightControl.name + ") in room " + this.room.name);
+                        console.info(this.name, "Check if presenceUuid is defined");
+                        this.presenceControl = Object.values(this.structureFile.controls).find(function(control) {
+                            var matchesType = LxEnums.KNOWN_PRESENT_CONTROLS.indexOf(control.type) !== -1,
+                                matchesUuid = control.uuidAction === this.config.presenceUuid;
+
+                            if (matchesUuid && !matchesType) {
+                                console.warn(this.name, "Found control with matching UUID but with non compatible type: '" + control.type + "'");
+                            }
+
+                            return matchesUuid && matchesType;
+                        }.bind(this));
+                        if (!this.presenceControl) {
+                            console.info(this.name, "Search LightControls and LightV2Controls in room");
+                            this.presenceControl = this.getLightControl();
+                            if (this.presenceControl) {
+                                this.lightStateUuid = this.presenceControl.states.activeMoods;
+                                console.info(this.name, "Found LightControl (" + this.presenceControl.name + ") in room " + this.room.name);
+                            } else {
+                                console.warn(this.name, "Couldn't find LightControl, no presence detection available");
+                            }
                         } else {
-                            console.warn(this.name, "Couldn't find LightControl, no presence detection available");
+                            this.presenceStateUuid = this.presenceControl.states.active;
+                            console.info(this.name, "Found presence control")
                         }
+
                     }
 
                     if (this.config.observingUuids && this.config.observingUuids.length) {
@@ -174,15 +191,15 @@ module.exports = NodeHelper.create({
                     format: this.irc.details.format
                 });
                 break;
+            case this.presenceStateUuid:
+                console.log(this.name, "Got PresenceState: " + value);
+                this._handlePresence(!!value);
+                break;
             case this.lightStateUuid:
                 value = JSON.parse(value);
-                var activeMoodsName = this._getNameForActiveMoods(value),
-                    isPresent = value[0] !== LxEnums.LIGHT_MOODS.ALL_OFF;
+                var activeMoodsName = this._getNameForActiveMoods(value);
                 console.info(this.name, "Got lightMood change to: " + activeMoodsName);
-                this.sendSocketNotification(LxEnums.NOTIFICATIONS.INTERN.PRESENCE, {
-                    present: isPresent
-                });
-                this._togglePresence(isPresent);
+                this._handlePresence(value[0] !== LxEnums.LIGHT_MOODS.ALL_OFF);
                 break;
             case this.notificationUuid:
                 value = JSON.parse(value);
@@ -195,21 +212,22 @@ module.exports = NodeHelper.create({
                 }
                 break;
             default:
-                if (Object.keys(this.stateMap).length) {
-                    var control = this.observingControls.find(function(ctrl) {
-                        return Object.values(ctrl.states).indexOf(uuid) !== -1;
-                    });
+            // Nothing to do here...
+        }
+        if (Object.keys(this.stateMap).length) {
+            var control = this.observingControls.find(function(ctrl) {
+                return Object.values(ctrl.states).indexOf(uuid) !== -1;
+            });
 
-                    if (!!control && !!this.stateMap[control.uuidAction]) {
-                        this.stateMap[control.uuidAction][Object.keys(control.states)[Object.values(control.states).indexOf(uuid)]] = value;
-                        if (Object.values(this.stateMap[control.uuidAction]).indexOf(null) === -1) {
-                            this.sendSocketNotification(LxEnums.NOTIFICATIONS.INTERN.OBSERVING_CONTROL, {
-                                control: control,
-                                states: this.stateMap[control.uuidAction]
-                            });
-                        }
-                    }
+            if (!!control && !!this.stateMap[control.uuidAction]) {
+                this.stateMap[control.uuidAction][Object.keys(control.states)[Object.values(control.states).indexOf(uuid)]] = value;
+                if (Object.values(this.stateMap[control.uuidAction]).indexOf(null) === -1) {
+                    this.sendSocketNotification(LxEnums.NOTIFICATIONS.INTERN.OBSERVING_CONTROL, {
+                        control: control,
+                        states: this.stateMap[control.uuidAction]
+                    });
                 }
+            }
         }
         // Emit any state for other modules to use
         if (value !== undefined) {
@@ -285,7 +303,11 @@ module.exports = NodeHelper.create({
         }.bind(this))
     },
 
-    _togglePresence: function _togglePresence(isPresent) {
+    _handlePresence: function _handlePresence(isPresent) {
+        this.sendSocketNotification(LxEnums.NOTIFICATIONS.INTERN.PRESENCE, {
+            present: isPresent
+        });
+
         if (!isPi()) {
             console.info("This is no Raspberry Pi, toggle the display is not supported!");
             return;

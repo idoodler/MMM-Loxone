@@ -45,6 +45,11 @@
         INFO_ONLY_ANALOG: "InfoOnlyAnalog",
         INFO_ONLY_DIGITAL: "InfoOnlyDigital",
         TEXT_STATE: "TextState"
-    }
+    };
+
+    exports.KNOWN_PRESENT_CONTROLS  = [
+        "InfoOnlyDigital",
+        "Switch"
+    ];
 
 }(typeof exports === 'undefined' ? window.LxEnums = {} : exports));

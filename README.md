@@ -62,18 +62,19 @@ var config = {
 ## Configuration options
 | Option                                | Description
 |-------------------------------------- |-----------
-| `host`                                | *required* Defines the Loxone Miniserver host. It can be an IP or your CloudDNS address<br><br>**Example:** `192.168.0.46` or `dns.loxonecloud.com/EEE00000000`<br><br>**Type:** `string`
-| `user`                                | *required* Defines the Loxone Miniserver username.<br><br>**Type:** `string`
-| `pwd`                                 | *required* Defines the Loxone Miniserver password.<br><br>**Type:** `string`
-| `roomUuid`                            | *Optional* Defines the room of which the room temperature is displayed<br><br>**Info:** Modules like the default [currentWeather](https://github.com/MichMich/MagicMirror/tree/develop/modules/default/currentweather) and [MMM-forecast-io](https://github.com/idoodler/MMM-forecast-io) will display the indoor temperature, please refere to their documentation<br><br>**Type:** `string`
-| `observingUuids`                      | *optional* Defines controls that should be shown on our module. Supported Controls: Virtual State, State<br><br>**Type:** `array`<br><br>**Default:** `Empty array`
-| `presence`                            | *Optional* If enabled this module will use the LightControllerV2 in the defined room to set the MagicMirror to sleep or wake it up<br><br>**Type:** `bool`<br><br>**Default:** `false`
-| `fadeOut`                             | *Optional* Fades out the webinterface before the HDMI output is disabled (MagicMirror goes to sleep)<br><br>**Type:** `bool`<br><br>**Default:** `false`
-| `showInfoNotifications`               | *optional* If info notifications should be shown.<br><br>**Type:** `bool`<br><br>**Default:** `true`
-| `showErrorNotifications`              | *optional* If error notifications should be shown.<br><b r>**Type:** `bool`<br><br>**Default:** `true`
-| `showSystemNotifications`             | *optional* If system notifications should be shown.<br><br>**Type:** `bool`<br><br>**Default:** `true`
-| `showNotificationOfControlTypes`      | *optional* Defines, what controls are able to show notifications on your MagicMirror².<br><br>**Type:** `array`<br><br>**Default:** `[ "Intercom", "Alarm", "SmokeAlarm", "Sauna" ]`
-| `allow3rdParty`                       | *optional* If 3rd Party modules are able to use this module to communicate with your Loxone Miniserver.<br><br>**Type:** `bool`<br><br>**Default:** `false`
+| `host`                                | **Required:** Defines the Loxone Miniserver host. It can be an IP or your CloudDNS address<br><br>**Example:** `192.168.0.46` or `dns.loxonecloud.com/EEE00000000`<br><br>**Type:** `string`
+| `user`                                | **Required:** Defines the Loxone Miniserver username.<br><br>**Type:** `string`
+| `pwd`                                 | **Required:** Defines the Loxone Miniserver password.<br><br>**Type:** `string`
+| `roomUuid`                            | **Optional:** Defines the room of which the room temperature is displayed<br><br>**Info:** Modules like the default [currentWeather](https://github.com/MichMich/MagicMirror/tree/develop/modules/default/currentweather) and [MMM-forecast-io](https://github.com/idoodler/MMM-forecast-io) will display the indoor temperature, please refere to their documentation<br><br>**Type:** `string`
+| `observingUuids`                      | **Optional:** Defines controls that should be shown on our module. Supported Controls: Virtual State, State<br><br>**Type:** `array`<br><br>**Default:** `Empty array`
+| `presence`                            | **Optional:** If enabled this module will use the LightControllerV2 in the defined room, **or** the virtual state defined in `presenceUuid` to set the MagicMirror to sleep or wake it up<br><br>**Type:** `bool`<br><br>**Default:** `false`
+| `presenceUuid`                        | **Optional:** Defines a digital virtual state control that will be used to detect presende. If the virtual state is `ON` the mirror will be on, if the state if `OFF` the mirror will be off<br><br>**Note:** Can be used to override the default behaviour of using the first LightControllerV2 in the room<br><br>**Type:** `string`
+| `fadeOut`                             | **Optional:** Fades out the webinterface before the HDMI output is disabled (MagicMirror goes to sleep)<br><br>**Type:** `bool`<br><br>**Default:** `false`
+| `showInfoNotifications`               | **Optional:** If info notifications should be shown.<br><br>**Type:** `bool`<br><br>**Default:** `true`
+| `showErrorNotifications`              | **Optional:** If error notifications should be shown.<br><b r>**Type:** `bool`<br><br>**Default:** `true`
+| `showSystemNotifications`             | **Optional:** If system notifications should be shown.<br><br>**Type:** `bool`<br><br>**Default:** `true`
+| `showNotificationOfControlTypes`      | **Optional:** Defines, what controls are able to show notifications on your MagicMirror².<br><br>**Type:** `array`<br><br>**Default:** `[ "Intercom", "Alarm", "SmokeAlarm", "Sauna" ]`
+| `allow3rdParty`                       | **Optional:** If 3rd Party modules are able to use this module to communicate with your Loxone Miniserver.<br><br>**Type:** `bool`<br><br>**Default:** `false`
 
 ## Display the room temperature
 ### Requirements
@@ -131,7 +132,6 @@ Notifications emitted by MMM-Loxone
 ## Next steps
 
 + Statistics
-+ Reworked presence detection
 + Systemstate
 
 ## License
