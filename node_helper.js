@@ -101,7 +101,7 @@ module.exports = NodeHelper.create({
                         console.info(this.name, "Check if presenceUuid is defined");
                         this.presenceControl = Object.values(this.structureFile.controls).find(function(control) {
                             var matchesType = LxEnums.KNOWN_PRESENT_CONTROLS.indexOf(control.type) !== -1,
-                                matchesUuid = control.uuidAction === this.config.presenceUuid;
+                                matchesUuid = control.uuidAction === this.config.presence;
 
                             if (matchesUuid && !matchesType) {
                                 console.warn(this.name, "Found control with matching UUID but with non compatible type: '" + control.type + "'");
