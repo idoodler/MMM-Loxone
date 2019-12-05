@@ -1,3 +1,5 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/03cae964d23f48b3a462e23f9fd7bc55)](https://www.codacy.com/manual/idoodler/MMM-Loxone?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=idoodler/MMM-Loxone&amp;utm_campaign=Badge_Grade)
+
 # MMM-Loxone
 This is a module for the [MagicMirror²](https://github.com/MichMich/MagicMirror/).
 
