@@ -311,13 +311,13 @@ module.exports = NodeHelper.create({
         if (!isPi()) {
             console.info("This is no Raspberry Pi, toggle the display is not supported!");
             return;
-        }
+        }/*
 
         this.togglePresenceTimeout && clearTimeout(this.togglePresenceTimeout);
         this.togglePresenceTimeout = setTimeout(function() {
             exec("vcgencmd display_power " + +isPresent, null);
             this.togglePresenceTimeout = null;
-        }.bind(this), 1000);
+        }.bind(this), 1000);*/
     },
 
     _getNameForActiveMoods: function _getNameForActiveMoods(moods) {
