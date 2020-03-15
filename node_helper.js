@@ -187,7 +187,7 @@ module.exports = NodeHelper.create({
                 console.info(this.name, "Got room temperature: " + value);
                 this.sendSocketNotification(LxEnums.NOTIFICATIONS.INTERN.ROOM_TEMP, {
                     roomName: this.room.name,
-                    temp: value,
+                    temp: parseFloat(value.toFixed(1)),
                     format: this.irc.details.format
                 });
                 break;
