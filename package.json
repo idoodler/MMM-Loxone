@@ -1,6 +1,6 @@
 {
   "name": "MMM-Loxone",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "MMM-Loxone connects to your Loxone Miniserver and lets it communicate to your MagicMirror².",
   "main": "MMM-Loxone.js",
   "author": "David Gölzhäuser",
