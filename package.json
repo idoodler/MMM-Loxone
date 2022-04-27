@@ -10,7 +10,7 @@
     "url": "https://github.com/idoodler/MMM-Loxone.git"
   },
   "devDependencies": {
-    "grunt": "^1.1.0",
+    "grunt": "^1.5.2",
     "grunt-eslint": "latest",
     "grunt-jsonlint": "^2.1.2",
     "grunt-markdownlint": "^1.1.6",
