@@ -5,6 +5,9 @@ This is a module for the [MagicMirror²](https://github.com/MichMich/MagicMirror
 
 MMM-Loxone connects to your Loxone Miniserver and lets it communicate to your MagicMirror².
 
+# ⚠️ Repository Archived
+This repository is no longer maintained. Development has moved to **[lucienkerl/MMM-Loxne](https://github.com/lucienkerl/MMM-Loxone)**. Please use and contribute there.
+
 ## Disclaimer
 This package has been written for the Raspberry Pi and has only be tester on the Raspberry Pi please report any incompatibilities.
 
